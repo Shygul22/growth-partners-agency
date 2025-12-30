@@ -1,5 +1,6 @@
-import { ArrowRight, Sparkles, Users, Zap, Target, Clock, Shield, ChevronRight, CheckCircle2, Star, Calendar, Mail, ListChecks, Briefcase, HeartHandshake, TrendingUp, Home, ShoppingBag, Building2 } from "lucide-react";
+import { ArrowRight, Sparkles, Users, Zap, Target, Clock, Shield, ChevronRight, CheckCircle2, Star, Calendar, Mail, ListChecks, Briefcase, HeartHandshake, TrendingUp, Home, ShoppingBag, Building2, Check, Crown, Diamond, Gem, ChevronDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 
 const Hero = () => {
   return (
@@ -18,30 +19,30 @@ const Hero = () => {
         {/* Badge */}
         <div className="flex justify-center mb-8 animate-fade-in">
           <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gold/10 border border-gold/20 text-gold text-sm font-medium">
-            <Sparkles className="w-4 h-4" />
-            Agency-Managed Personal Support
+            <Diamond className="w-4 h-4" />
+            White-Glove Virtual Assistance
           </div>
         </div>
 
         {/* Main Heading */}
         <h1 className="text-center font-display font-bold text-4xl md:text-6xl lg:text-7xl text-primary-foreground leading-tight mb-6 animate-slide-up">
-          Your Goals Deserve Focus.<br />
-          <span className="text-gradient">We Handle the Rest.</span>
+          Your Time is Precious.<br />
+          <span className="text-gradient">We Guard It.</span>
         </h1>
 
         {/* Subheading */}
         <p className="text-center text-lg md:text-xl text-primary-foreground/70 max-w-3xl mx-auto mb-10 animate-slide-up" style={{ animationDelay: '0.1s' }}>
-          We manage your daily tasks and long-term goals through agency-managed virtual assistants—then scale with niche expertise as your needs evolve.
+          Experience bespoke virtual assistance crafted for discerning individuals. Our curated professionals seamlessly integrate into your life—managing the details so you can focus on what truly matters.
         </p>
 
         {/* CTA Buttons */}
         <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-16 animate-slide-up" style={{ animationDelay: '0.2s' }}>
           <Button variant="hero" size="xl">
-            Get Your Personal VA
+            Request a Consultation
             <ArrowRight className="w-5 h-5" />
           </Button>
           <Button variant="heroOutline" size="xl">
-            See How It Works
+            Explore Our Services
           </Button>
         </div>
 
@@ -49,9 +50,9 @@ const Hero = () => {
         <div className="grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-8 max-w-4xl mx-auto animate-fade-in" style={{ animationDelay: '0.4s' }}>
           {[
             { number: "10K+", label: "Hours Reclaimed" },
-            { number: "98%", label: "Goal Completion" },
-            { number: "500+", label: "Happy Clients" },
-            { number: "24h", label: "Response Time" },
+            { number: "98%", label: "Client Satisfaction" },
+            { number: "500+", label: "Elite Clients" },
+            { number: "Same Day", label: "Onboarding" },
           ].map((stat, index) => (
             <div key={index} className="text-center">
               <div className="text-3xl md:text-4xl font-display font-bold text-gold mb-1">{stat.number}</div>
@@ -73,12 +74,12 @@ const Hero = () => {
 
 const ValueHighlights = () => {
   const highlights = [
-    { icon: ListChecks, text: "Personal task & life admin management" },
-    { icon: Target, text: "Goal-focused productivity support" },
-    { icon: Shield, text: "Pre-vetted, agency-managed VAs" },
-    { icon: Briefcase, text: "Optional niche & industry specialists" },
-    { icon: TrendingUp, text: "Scalable support without hiring risk" },
-    { icon: CheckCircle2, text: "Consistent execution & accountability" },
+    { icon: ListChecks, text: "Curated life & task management" },
+    { icon: Target, text: "Goal-aligned productivity" },
+    { icon: Shield, text: "Vetted elite professionals" },
+    { icon: Briefcase, text: "Specialist access on demand" },
+    { icon: TrendingUp, text: "Effortless scaling" },
+    { icon: CheckCircle2, text: "Guaranteed excellence" },
   ];
 
   return (
@@ -103,23 +104,23 @@ const PersonalSupport = () => {
   const services = [
     {
       icon: Calendar,
-      title: "Personal Scheduling",
-      description: "Calendar management, appointment booking, travel planning, and daily schedule optimization.",
+      title: "Executive Scheduling",
+      description: "Masterful calendar orchestration, travel arrangements, and appointment curation tailored to your rhythm.",
     },
     {
       icon: Mail,
-      title: "Inbox Management",
-      description: "Email organization, response drafting, priority filtering, and communication follow-ups.",
+      title: "Communication Concierge",
+      description: "Thoughtful inbox stewardship, correspondence drafting, and priority-based communication management.",
     },
     {
       icon: Home,
-      title: "Life Administration",
-      description: "Bill payments, subscriptions, research tasks, errands coordination, and personal projects.",
+      title: "Lifestyle Management",
+      description: "Seamless handling of personal affairs—from household coordination to bespoke research and procurement.",
     },
     {
       icon: Target,
-      title: "Goal & Productivity Support",
-      description: "Task tracking, habit accountability, deadline management, and progress reporting.",
+      title: "Achievement Partnership",
+      description: "Dedicated accountability support, milestone tracking, and strategic progress reporting aligned with your vision.",
     },
   ];
 
@@ -127,12 +128,12 @@ const PersonalSupport = () => {
     <section className="py-24 bg-background">
       <div className="container mx-auto px-6">
         <div className="text-center mb-16">
-          <span className="text-gold font-semibold text-sm uppercase tracking-wider">Personal Support First</span>
+          <span className="text-gold font-semibold text-sm uppercase tracking-wider">Concierge Services</span>
           <h2 className="font-display text-3xl md:text-5xl font-bold text-foreground mt-3 mb-4">
-            Your Reliable Extension
+            An Invisible Hand, Impeccable Results
           </h2>
           <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
-            From personal scheduling to life administration, our VAs act as a reliable extension of your daily life—completing tasks accurately, on time, and aligned with your goals.
+            Our distinguished professionals operate as a seamless extension of your world—anticipating needs, executing flawlessly, and elevating every aspect of your daily life.
           </p>
         </div>
 
@@ -157,12 +158,12 @@ const PersonalSupport = () => {
 
 const NicheSpecialists = () => {
   const specialists = [
-    { icon: TrendingUp, title: "Marketing", description: "Content, social media, campaigns" },
-    { icon: Building2, title: "Real Estate", description: "Listings, coordination, CRM" },
-    { icon: ShoppingBag, title: "E-Commerce", description: "Orders, inventory, customer service" },
-    { icon: Briefcase, title: "Executive", description: "High-level admin & strategy support" },
-    { icon: Users, title: "Operations", description: "Process management & workflows" },
-    { icon: HeartHandshake, title: "Customer Success", description: "Client relations & retention" },
+    { icon: TrendingUp, title: "Marketing Virtuoso", description: "Brand elevation & campaigns" },
+    { icon: Building2, title: "Property Concierge", description: "Real estate excellence" },
+    { icon: ShoppingBag, title: "Commerce Specialist", description: "E-commerce mastery" },
+    { icon: Briefcase, title: "Executive Partner", description: "C-suite level support" },
+    { icon: Users, title: "Operations Architect", description: "Systems & efficiency" },
+    { icon: HeartHandshake, title: "Client Relations", description: "Relationship cultivation" },
   ];
 
   return (
@@ -170,12 +171,12 @@ const NicheSpecialists = () => {
       <div className="container mx-auto px-6">
         <div className="grid lg:grid-cols-2 gap-16 items-center">
           <div>
-            <span className="text-gold font-semibold text-sm uppercase tracking-wider">Specialized Talent</span>
+            <span className="text-gold font-semibold text-sm uppercase tracking-wider">Specialist Network</span>
             <h2 className="font-display text-3xl md:text-5xl font-bold text-foreground mt-3 mb-6">
-              Niche VAs When You Need Them
+              Expertise on Demand
             </h2>
             <p className="text-muted-foreground text-lg mb-8">
-              As your needs grow, we provide access to Niche Virtual Assistants with specialized expertise. Our agency matches you with the right talent—without the burden of hiring, training, or managing.
+              As your ambitions expand, access our exclusive network of domain specialists. Each expert is meticulously selected, rigorously vetted, and prepared to deliver exceptional results in their field of mastery.
             </p>
             
             <div className="grid grid-cols-2 gap-4">
@@ -198,17 +199,17 @@ const NicheSpecialists = () => {
             <div className="relative bg-card rounded-3xl shadow-card p-8 border border-border">
               <div className="text-center mb-8">
                 <div className="w-16 h-16 rounded-full bg-gold mx-auto flex items-center justify-center mb-4">
-                  <Zap className="w-8 h-8 text-navy" />
+                  <Crown className="w-8 h-8 text-navy" />
                 </div>
-                <h3 className="font-display text-2xl font-bold text-foreground mb-2">Flexible & Scalable</h3>
-                <p className="text-muted-foreground">Start personal, scale specialized</p>
+                <h3 className="font-display text-2xl font-bold text-foreground mb-2">Tailored to You</h3>
+                <p className="text-muted-foreground">Bespoke support that evolves</p>
               </div>
               
               <div className="space-y-4">
                 {[
-                  "Start with personal task support",
-                  "Add niche specialists as needed",
-                  "No long-term contracts required",
+                  "Begin with personal concierge",
+                  "Add specialists as you grow",
+                  "Flexible, commitment-free",
                   "Seamless team coordination",
                 ].map((item, index) => (
                   <div key={index} className="flex items-center gap-3 p-3 bg-background rounded-lg">
@@ -225,27 +226,177 @@ const NicheSpecialists = () => {
   );
 };
 
+const Pricing = () => {
+  const plans = [
+    {
+      name: "Personal",
+      icon: Gem,
+      price: "$997",
+      period: "/month",
+      description: "Essential concierge support for the discerning individual",
+      features: [
+        "20 hours of dedicated support",
+        "Personal task management",
+        "Calendar & scheduling",
+        "Email management",
+        "Basic research & procurement",
+        "48-hour response guarantee",
+        "Weekly progress reports",
+      ],
+      cta: "Begin Your Journey",
+      popular: false,
+    },
+    {
+      name: "Professional",
+      icon: Crown,
+      price: "$2,497",
+      period: "/month",
+      description: "Elevated support with access to our specialist network",
+      features: [
+        "50 hours of dedicated support",
+        "Everything in Personal, plus:",
+        "Access to niche specialists",
+        "Advanced project management",
+        "Goal tracking & accountability",
+        "Priority 24-hour response",
+        "Bi-weekly strategy calls",
+        "Dedicated account liaison",
+      ],
+      cta: "Elevate Your Experience",
+      popular: true,
+    },
+    {
+      name: "Premium",
+      icon: Diamond,
+      price: "$4,997",
+      period: "/month",
+      description: "The ultimate white-glove experience with a dedicated team",
+      features: [
+        "Unlimited dedicated support",
+        "Everything in Professional, plus:",
+        "Dedicated team of 2-3 VAs",
+        "Personal account manager",
+        "Same-day priority handling",
+        "24/7 availability",
+        "Weekly executive briefings",
+        "Quarterly strategy sessions",
+        "Concierge-level service",
+      ],
+      cta: "Experience Excellence",
+      popular: false,
+    },
+  ];
+
+  return (
+    <section className="py-24 bg-background">
+      <div className="container mx-auto px-6">
+        <div className="text-center mb-16">
+          <span className="text-gold font-semibold text-sm uppercase tracking-wider">Investment</span>
+          <h2 className="font-display text-3xl md:text-5xl font-bold text-foreground mt-3 mb-4">
+            Choose Your Level of Support
+          </h2>
+          <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
+            Each tier is crafted to deliver exceptional value, with the flexibility to evolve as your needs grow.
+          </p>
+        </div>
+
+        <div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
+          {plans.map((plan, index) => (
+            <div
+              key={index}
+              className={`relative p-8 rounded-3xl border transition-all duration-300 hover:-translate-y-1 ${
+                plan.popular
+                  ? "bg-navy border-gold shadow-glow"
+                  : "bg-card border-border shadow-card hover:border-gold/30"
+              }`}
+            >
+              {plan.popular && (
+                <div className="absolute -top-4 left-1/2 -translate-x-1/2">
+                  <span className="px-4 py-1.5 bg-gold text-navy text-sm font-semibold rounded-full">
+                    Most Popular
+                  </span>
+                </div>
+              )}
+
+              <div className="text-center mb-8">
+                <div className={`w-14 h-14 rounded-xl mx-auto flex items-center justify-center mb-4 ${
+                  plan.popular ? "bg-gold/20" : "bg-gold/10"
+                }`}>
+                  <plan.icon className={`w-7 h-7 ${plan.popular ? "text-gold" : "text-gold"}`} />
+                </div>
+                <h3 className={`font-display text-2xl font-bold mb-2 ${
+                  plan.popular ? "text-primary-foreground" : "text-foreground"
+                }`}>
+                  {plan.name}
+                </h3>
+                <p className={`text-sm mb-4 ${plan.popular ? "text-primary-foreground/70" : "text-muted-foreground"}`}>
+                  {plan.description}
+                </p>
+                <div className="flex items-baseline justify-center gap-1">
+                  <span className={`text-4xl font-display font-bold ${
+                    plan.popular ? "text-gold" : "text-foreground"
+                  }`}>
+                    {plan.price}
+                  </span>
+                  <span className={plan.popular ? "text-primary-foreground/60" : "text-muted-foreground"}>
+                    {plan.period}
+                  </span>
+                </div>
+              </div>
+
+              <ul className="space-y-3 mb-8">
+                {plan.features.map((feature, featureIndex) => (
+                  <li key={featureIndex} className="flex items-start gap-3">
+                    <Check className={`w-5 h-5 flex-shrink-0 mt-0.5 ${
+                      plan.popular ? "text-gold" : "text-gold"
+                    }`} />
+                    <span className={plan.popular ? "text-primary-foreground/80" : "text-muted-foreground"}>
+                      {feature}
+                    </span>
+                  </li>
+                ))}
+              </ul>
+
+              <Button
+                variant={plan.popular ? "hero" : "gold"}
+                size="lg"
+                className="w-full"
+              >
+                {plan.cta}
+              </Button>
+            </div>
+          ))}
+        </div>
+
+        <p className="text-center text-muted-foreground mt-12">
+          All plans include a 14-day satisfaction guarantee. No long-term contracts required.
+        </p>
+      </div>
+    </section>
+  );
+};
+
 const HowItWorks = () => {
   const steps = [
     {
       number: "01",
-      title: "Share Your Goals",
-      description: "Tell us about your lifestyle, priorities, and what support you need to stay focused.",
+      title: "Discovery Consultation",
+      description: "Share your vision, lifestyle, and aspirations in a private consultation with our team.",
     },
     {
       number: "02",
-      title: "We Match Your VA",
-      description: "We pair you with a pre-vetted VA trained to align with your personal workflow.",
+      title: "Curated Matching",
+      description: "We handpick the ideal professional from our elite network, aligned perfectly with your needs.",
     },
     {
       number: "03",
-      title: "Seamless Integration",
-      description: "Your VA integrates with your tools, calendar, and daily routines—fully managed by us.",
+      title: "Seamless Onboarding",
+      description: "Your assistant integrates effortlessly into your tools, routines, and preferences.",
     },
     {
       number: "04",
-      title: "Focus & Grow",
-      description: "Reclaim your time, hit your goals, and scale support as your needs evolve.",
+      title: "Ongoing Excellence",
+      description: "Focus on your ambitions while we ensure flawless execution and continuous refinement.",
     },
   ];
 
@@ -253,12 +404,12 @@ const HowItWorks = () => {
     <section className="py-24 bg-hero">
       <div className="container mx-auto px-6">
         <div className="text-center mb-16">
-          <span className="text-gold font-semibold text-sm uppercase tracking-wider">The Process</span>
+          <span className="text-gold font-semibold text-sm uppercase tracking-wider">The Experience</span>
           <h2 className="font-display text-3xl md:text-5xl font-bold text-primary-foreground mt-3 mb-4">
-            How It Works
+            Your Journey to Freedom
           </h2>
           <p className="text-primary-foreground/70 text-lg max-w-2xl mx-auto">
-            Get started in days, not months. Our streamlined process gets you focused and supported fast.
+            A refined process designed to deliver exceptional support from the very first day.
           </p>
         </div>
 
@@ -281,24 +432,92 @@ const HowItWorks = () => {
   );
 };
 
+const FAQ = () => {
+  const faqs = [
+    {
+      question: "How quickly can I get started with a virtual assistant?",
+      answer: "Our streamlined onboarding process typically takes just 24-48 hours. After your discovery consultation, we match you with an ideal assistant and begin integration immediately. Most clients are fully operational within the first week.",
+    },
+    {
+      question: "What makes your VAs different from freelance platforms?",
+      answer: "Every professional in our network undergoes rigorous vetting, including skills assessment, background verification, and cultural fit evaluation. More importantly, they are agency-managed—meaning we handle training, quality assurance, performance tracking, and any necessary replacements, ensuring consistent excellence.",
+    },
+    {
+      question: "How does pricing work, and are there any hidden fees?",
+      answer: "Our pricing is transparent and all-inclusive. Your monthly investment covers dedicated hours, management oversight, tools access, and our satisfaction guarantee. There are no setup fees, hidden costs, or long-term contracts required.",
+    },
+    {
+      question: "Can I upgrade or downgrade my plan as my needs change?",
+      answer: "Absolutely. Our service is designed to evolve with you. Upgrade to access more hours or specialist support, or adjust down during quieter periods. Changes take effect at your next billing cycle with no penalties.",
+    },
+    {
+      question: "How do niche specialists work within the service?",
+      answer: "Starting from our Professional tier, you gain access to our curated network of domain experts. Simply request support in areas like marketing, real estate, or operations, and we match you with a vetted specialist. They integrate seamlessly with your primary assistant for cohesive support.",
+    },
+    {
+      question: "What happens if I am not satisfied with my assistant?",
+      answer: "Your satisfaction is paramount. If your assistant is not meeting expectations, we work swiftly to address concerns. If a replacement is needed, we provide one at no additional cost. Our 14-day satisfaction guarantee ensures you can start risk-free.",
+    },
+    {
+      question: "What tools and platforms do your assistants use?",
+      answer: "Our professionals are proficient across all major productivity platforms—including Google Workspace, Microsoft 365, Slack, Notion, Asana, Monday.com, and many more. They adapt to your existing tech stack, ensuring seamless integration from day one.",
+    },
+  ];
+
+  return (
+    <section className="py-24 bg-cream">
+      <div className="container mx-auto px-6">
+        <div className="text-center mb-16">
+          <span className="text-gold font-semibold text-sm uppercase tracking-wider">Questions & Answers</span>
+          <h2 className="font-display text-3xl md:text-5xl font-bold text-foreground mt-3 mb-4">
+            Everything You Need to Know
+          </h2>
+          <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
+            Clarity and transparency are at the heart of our service.
+          </p>
+        </div>
+
+        <div className="max-w-3xl mx-auto">
+          <Accordion type="single" collapsible className="space-y-4">
+            {faqs.map((faq, index) => (
+              <AccordionItem
+                key={index}
+                value={`item-${index}`}
+                className="bg-card rounded-xl border border-border px-6 data-[state=open]:border-gold/30 transition-colors"
+              >
+                <AccordionTrigger className="text-left font-display font-semibold text-foreground hover:text-gold hover:no-underline py-6">
+                  {faq.question}
+                </AccordionTrigger>
+                <AccordionContent className="text-muted-foreground pb-6">
+                  {faq.answer}
+                </AccordionContent>
+              </AccordionItem>
+            ))}
+          </Accordion>
+        </div>
+      </div>
+    </section>
+  );
+};
+
 const Testimonials = () => {
   const testimonials = [
     {
-      quote: "I finally have time to focus on what matters. My VA handles everything else seamlessly.",
-      author: "Jessica M.",
-      role: "Entrepreneur & Founder",
+      quote: "The level of discretion and professionalism is unparalleled. They anticipated my needs before I even voiced them.",
+      author: "Victoria S.",
+      role: "Private Investor",
       rating: 5,
     },
     {
-      quote: "From inbox chaos to organized calm. The accountability has transformed my productivity.",
-      author: "David K.",
-      role: "Executive Coach",
+      quote: "Transitioning from chaos to calm was seamless. My assistant has become indispensable to both my business and personal life.",
+      author: "Jonathan R.",
+      role: "Tech Founder & CEO",
       rating: 5,
     },
     {
-      quote: "Started with personal support, now have a full team. The scaling process was effortless.",
-      author: "Amanda R.",
-      role: "Real Estate Investor",
+      quote: "Finally, a service that understands the demands of a high-performance lifestyle. The ROI has been extraordinary.",
+      author: "Alexandra M.",
+      role: "Managing Partner, Law Firm",
       rating: 5,
     },
   ];
@@ -307,11 +526,11 @@ const Testimonials = () => {
     <section className="py-24 bg-background">
       <div className="container mx-auto px-6">
         <div className="text-center mb-16">
-          <span className="text-gold font-semibold text-sm uppercase tracking-wider">Testimonials</span>
+          <span className="text-gold font-semibold text-sm uppercase tracking-wider">Client Experiences</span>
           <h2 className="font-display text-3xl md:text-5xl font-bold text-foreground mt-3 mb-4">
-            More Time. Less Stress.
+            Trusted by the Exceptional
           </h2>
-          <p className="text-muted-foreground text-lg">Clear progress toward your goals.</p>
+          <p className="text-muted-foreground text-lg">Hear from those who have transformed their lives.</p>
         </div>
 
         <div className="grid md:grid-cols-3 gap-8">
@@ -337,7 +556,7 @@ const Testimonials = () => {
 
 const CTA = () => {
   return (
-    <section className="py-24 bg-cream">
+    <section className="py-24 bg-background">
       <div className="container mx-auto px-6">
         <div className="relative bg-hero rounded-3xl p-12 md:p-16 overflow-hidden">
           {/* Background Elements */}
@@ -345,19 +564,20 @@ const CTA = () => {
           <div className="absolute bottom-0 left-0 w-72 h-72 bg-gold/5 rounded-full blur-3xl" />
           
           <div className="relative text-center max-w-3xl mx-auto">
+            <Diamond className="w-12 h-12 text-gold mx-auto mb-6" />
             <h2 className="font-display text-3xl md:text-5xl font-bold text-primary-foreground mb-6">
               Ready to Reclaim Your Time?
             </h2>
             <p className="text-primary-foreground/70 text-lg mb-8">
-              Join hundreds of founders and professionals who trust our agency-managed VAs to support their goals and simplify their lives.
+              Join an exclusive community of individuals who refuse to compromise on quality. Your journey to effortless excellence begins with a single conversation.
             </p>
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
               <Button variant="hero" size="xl">
-                Get Started Today
+                Schedule Your Consultation
                 <ChevronRight className="w-5 h-5" />
               </Button>
               <Button variant="heroOutline" size="lg">
-                Book a Free Consultation
+                View Pricing
               </Button>
             </div>
           </div>
@@ -375,14 +595,14 @@ const Footer = () => {
           <div className="md:col-span-2">
             <div className="font-display text-2xl font-bold text-primary-foreground mb-4">VA Agency</div>
             <p className="text-primary-foreground/60 max-w-md">
-              Personal support first, specialized talent when you need it. We help you stay organized, consistent, and focused—so your time is spent on what truly matters.
+              White-glove virtual assistance for discerning individuals. We guard your time so you can focus on what truly matters.
             </p>
           </div>
           
           <div>
             <h4 className="font-display font-semibold text-primary-foreground mb-4">Services</h4>
             <ul className="space-y-2">
-              {["Personal Support", "Life Admin", "Niche Specialists", "Goal Coaching"].map((item, index) => (
+              {["Personal Concierge", "Lifestyle Management", "Specialist Network", "Executive Support"].map((item, index) => (
                 <li key={index}>
                   <a href="#" className="text-primary-foreground/60 hover:text-gold transition-colors">{item}</a>
                 </li>
@@ -393,7 +613,7 @@ const Footer = () => {
           <div>
             <h4 className="font-display font-semibold text-primary-foreground mb-4">Company</h4>
             <ul className="space-y-2">
-              {["About Us", "How It Works", "Pricing", "Contact"].map((item, index) => (
+              {["About Us", "Our Process", "Pricing", "Contact"].map((item, index) => (
                 <li key={index}>
                   <a href="#" className="text-primary-foreground/60 hover:text-gold transition-colors">{item}</a>
                 </li>
@@ -427,7 +647,7 @@ const Navbar = () => {
           <div className="font-display text-xl font-bold text-primary-foreground">VA Agency</div>
           
           <div className="hidden md:flex items-center gap-8">
-            {["Personal Support", "Specialists", "How It Works", "Pricing"].map((item, index) => (
+            {["Services", "Specialists", "Pricing", "FAQ"].map((item, index) => (
               <a key={index} href="#" className="text-primary-foreground/70 hover:text-gold transition-colors text-sm font-medium">
                 {item}
               </a>
@@ -436,7 +656,7 @@ const Navbar = () => {
           
           <div className="flex items-center gap-4">
             <Button variant="heroOutline" size="sm" className="hidden sm:flex">
-              Log In
+              Client Login
             </Button>
             <Button variant="hero" size="sm">
               Get Started
@@ -456,7 +676,9 @@ const Index = () => {
       <ValueHighlights />
       <PersonalSupport />
       <NicheSpecialists />
+      <Pricing />
       <HowItWorks />
+      <FAQ />
       <Testimonials />
       <CTA />
       <Footer />
