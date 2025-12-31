@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
+import { Link } from "react-router-dom";
 import { z } from "zod";
 
 const Hero = () => {
@@ -44,13 +45,17 @@ const Hero = () => {
 
         {/* CTA Buttons */}
         <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-16 animate-slide-up" style={{ animationDelay: '0.2s' }}>
-          <Button variant="hero" size="xl">
-            Request a Consultation
-            <ArrowRight className="w-5 h-5" />
-          </Button>
-          <Button variant="heroOutline" size="xl">
-            Explore Our Services
-          </Button>
+          <Link to="/get-started">
+            <Button variant="hero" size="xl">
+              Request a Consultation
+              <ArrowRight className="w-5 h-5" />
+            </Button>
+          </Link>
+          <Link to="/services">
+            <Button variant="heroOutline" size="xl">
+              Explore Our Services
+            </Button>
+          </Link>
         </div>
 
         {/* Stats */}
@@ -420,13 +425,15 @@ const Pricing = () => {
                 ))}
               </ul>
 
-              <Button
-                variant={plan.popular ? "hero" : "gold"}
-                size="lg"
-                className="w-full"
-              >
-                {plan.cta}
-              </Button>
+              <Link to="/get-started">
+                <Button
+                  variant={plan.popular ? "hero" : "gold"}
+                  size="lg"
+                  className="w-full"
+                >
+                  {plan.cta}
+                </Button>
+              </Link>
             </div>
           ))}
         </div>
@@ -823,13 +830,17 @@ const CTA = () => {
               Join an exclusive community of individuals who refuse to compromise on quality. Your journey to effortless excellence begins with a single conversation.
             </p>
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-              <Button variant="hero" size="xl">
-                Schedule Your Consultation
-                <ChevronRight className="w-5 h-5" />
-              </Button>
-              <Button variant="heroOutline" size="lg">
-                View Pricing
-              </Button>
+              <Link to="/get-started">
+                <Button variant="hero" size="xl">
+                  Schedule Your Consultation
+                  <ChevronRight className="w-5 h-5" />
+                </Button>
+              </Link>
+              <Link to="/pricing">
+                <Button variant="heroOutline" size="lg">
+                  View Pricing
+                </Button>
+              </Link>
             </div>
           </div>
         </div>
@@ -932,12 +943,16 @@ const Navbar = () => {
             </div>
             
             <div className="hidden md:flex items-center gap-4">
-              <Button variant="heroOutline" size="sm">
-                Client Login
-              </Button>
-              <Button variant="hero" size="sm">
-                Get Started
-              </Button>
+              <Link to="/login">
+                <Button variant="heroOutline" size="sm">
+                  Client Login
+                </Button>
+              </Link>
+              <Link to="/get-started">
+                <Button variant="hero" size="sm">
+                  Get Started
+                </Button>
+              </Link>
             </div>
 
             {/* Mobile Menu Button */}
@@ -993,12 +1008,16 @@ const Navbar = () => {
           </div>
 
           <div className="p-6 border-t border-gold/10 space-y-3">
-            <Button variant="heroOutline" size="lg" className="w-full">
-              Client Login
-            </Button>
-            <Button variant="hero" size="lg" className="w-full">
-              Get Started
-            </Button>
+            <Link to="/login" onClick={() => setIsOpen(false)}>
+              <Button variant="heroOutline" size="lg" className="w-full">
+                Client Login
+              </Button>
+            </Link>
+            <Link to="/get-started" onClick={() => setIsOpen(false)}>
+              <Button variant="hero" size="lg" className="w-full">
+                Get Started
+              </Button>
+            </Link>
           </div>
         </div>
       </div>
