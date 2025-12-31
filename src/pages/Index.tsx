@@ -1,5 +1,6 @@
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { ArrowRight, Sparkles, Users, Zap, Target, Clock, Shield, ChevronRight, CheckCircle2, Star, Calendar, Mail, ListChecks, Briefcase, HeartHandshake, TrendingUp, Home, ShoppingBag, Building2, Check, Crown, Diamond, Gem, Menu, X, Phone, Send } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Input } from "@/components/ui/input";
@@ -232,12 +233,57 @@ const NicheSpecialists = () => {
   );
 };
 
+// Custom hook for scroll-triggered animations
+const useScrollAnimation = () => {
+  const ref = useRef<HTMLDivElement>(null);
+  const [isVisible, setIsVisible] = useState(false);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setIsVisible(true);
+          observer.unobserve(entry.target);
+        }
+      },
+      { threshold: 0.1, rootMargin: "0px 0px -50px 0px" }
+    );
+
+    if (ref.current) {
+      observer.observe(ref.current);
+    }
+
+    return () => observer.disconnect();
+  }, []);
+
+  return { ref, isVisible };
+};
+
+const AnimatedSection = ({ children, className = "", delay = 0 }: { children: React.ReactNode; className?: string; delay?: number }) => {
+  const { ref, isVisible } = useScrollAnimation();
+  
+  return (
+    <div
+      ref={ref}
+      className={`transition-all duration-700 ease-out ${className}`}
+      style={{
+        opacity: isVisible ? 1 : 0,
+        transform: isVisible ? "translateY(0)" : "translateY(40px)",
+        transitionDelay: `${delay}ms`,
+      }}
+    >
+      {children}
+    </div>
+  );
+};
+
 const Pricing = () => {
   const plans = [
     {
       name: "Personal",
       icon: Gem,
-      price: "$997",
+      originalPrice: "$30",
+      price: "$15",
       period: "/month",
       description: "Essential concierge support for the discerning individual",
       features: [
@@ -251,11 +297,13 @@ const Pricing = () => {
       ],
       cta: "Begin Your Journey",
       popular: false,
+      trialText: "$6 for 15-day trial",
     },
     {
       name: "Professional",
       icon: Crown,
-      price: "$2,497",
+      originalPrice: "$60",
+      price: "$30",
       period: "/month",
       description: "Elevated support with access to our specialist network",
       features: [
@@ -270,11 +318,13 @@ const Pricing = () => {
       ],
       cta: "Elevate Your Experience",
       popular: true,
+      trialText: "$6 for 15-day trial",
     },
     {
       name: "Premium",
       icon: Diamond,
-      price: "$4,997",
+      originalPrice: "$120",
+      price: "$60",
       period: "/month",
       description: "The ultimate white-glove experience with a dedicated team",
       features: [
@@ -290,6 +340,7 @@ const Pricing = () => {
       ],
       cta: "Experience Excellence",
       popular: false,
+      trialText: "$6 for 15-day trial",
     },
   ];
 
@@ -338,7 +389,10 @@ const Pricing = () => {
                 <p className={`text-sm mb-4 ${plan.popular ? "text-primary-foreground/70" : "text-muted-foreground"}`}>
                   {plan.description}
                 </p>
-                <div className="flex items-baseline justify-center gap-1">
+                <div className="flex items-baseline justify-center gap-2">
+                  <span className={`text-lg line-through ${plan.popular ? "text-primary-foreground/40" : "text-muted-foreground/60"}`}>
+                    {plan.originalPrice}
+                  </span>
                   <span className={`text-4xl font-display font-bold ${
                     plan.popular ? "text-gold" : "text-foreground"
                   }`}>
@@ -347,6 +401,9 @@ const Pricing = () => {
                   <span className={plan.popular ? "text-primary-foreground/60" : "text-muted-foreground"}>
                     {plan.period}
                   </span>
+                </div>
+                <div className={`mt-2 text-sm font-medium ${plan.popular ? "text-gold" : "text-gold"}`}>
+                  {plan.trialText}
                 </div>
               </div>
 
@@ -550,16 +607,33 @@ const ContactForm = () => {
       return;
     }
 
-    // Simulate form submission
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    
-    toast({
-      title: "Message Received",
-      description: "Thank you for reaching out. Our team will contact you within 24 hours.",
-    });
-    
-    setFormData({ name: "", email: "", phone: "", message: "" });
-    setIsSubmitting(false);
+    try {
+      const { error } = await supabase
+        .from('contact_submissions')
+        .insert({
+          name: result.data.name,
+          email: result.data.email,
+          phone: result.data.phone || null,
+          message: result.data.message,
+        });
+
+      if (error) throw error;
+      
+      toast({
+        title: "Message Received",
+        description: "Thank you for reaching out. Our team will contact you within 24 hours.",
+      });
+      
+      setFormData({ name: "", email: "", phone: "", message: "" });
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Something went wrong. Please try again later.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -937,15 +1011,33 @@ const Index = () => {
     <main className="overflow-hidden">
       <Navbar />
       <Hero />
-      <ValueHighlights />
-      <PersonalSupport />
-      <NicheSpecialists />
-      <Pricing />
-      <HowItWorks />
-      <FAQ />
-      <ContactForm />
-      <Testimonials />
-      <CTA />
+      <AnimatedSection>
+        <ValueHighlights />
+      </AnimatedSection>
+      <AnimatedSection>
+        <PersonalSupport />
+      </AnimatedSection>
+      <AnimatedSection>
+        <NicheSpecialists />
+      </AnimatedSection>
+      <AnimatedSection>
+        <Pricing />
+      </AnimatedSection>
+      <AnimatedSection>
+        <HowItWorks />
+      </AnimatedSection>
+      <AnimatedSection>
+        <FAQ />
+      </AnimatedSection>
+      <AnimatedSection>
+        <ContactForm />
+      </AnimatedSection>
+      <AnimatedSection>
+        <Testimonials />
+      </AnimatedSection>
+      <AnimatedSection>
+        <CTA />
+      </AnimatedSection>
       <Footer />
     </main>
   );
