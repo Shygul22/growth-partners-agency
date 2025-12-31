@@ -943,7 +943,7 @@ const Navbar = () => {
             </div>
             
             <div className="hidden md:flex items-center gap-4">
-              <Link to="/login">
+              <Link to="/auth">
                 <Button variant="heroOutline" size="sm">
                   Client Login
                 </Button>
@@ -1008,7 +1008,7 @@ const Navbar = () => {
           </div>
 
           <div className="p-6 border-t border-gold/10 space-y-3">
-            <Link to="/login" onClick={() => setIsOpen(false)}>
+            <Link to="/auth" onClick={() => setIsOpen(false)}>
               <Button variant="heroOutline" size="lg" className="w-full">
                 Client Login
               </Button>
