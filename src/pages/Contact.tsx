@@ -90,7 +90,7 @@ const Contact = () => {
           <div className="flex items-center justify-between h-16">
             <Link to="/" className="font-display text-xl font-bold text-primary-foreground">VA Agency</Link>
             <div className="flex items-center gap-4">
-              <Link to="/login">
+              <Link to="/auth">
                 <Button variant="heroOutline" size="sm">Client Login</Button>
               </Link>
               <Link to="/get-started">
