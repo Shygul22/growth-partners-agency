@@ -1,10 +1,11 @@
 import { useState, useEffect } from "react";
-import { User, CreditCard, Clock, Calendar, Settings, LogOut, ChevronRight, Crown, TrendingUp, CheckCircle2 } from "lucide-react";
+import { User, CreditCard, Clock, Calendar, Settings, LogOut, ChevronRight, Crown, TrendingUp, CheckCircle2, Edit } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { Link, useNavigate } from "react-router-dom";
+import ProfileEditor from "@/components/ProfileEditor";
 
 interface Profile {
   id: string;
@@ -352,26 +353,21 @@ const Dashboard = () => {
 
             {activeTab === "settings" && (
               <div className="bg-card rounded-xl border border-border p-6">
-                <h3 className="font-display text-xl font-semibold text-foreground mb-6">Account Settings</h3>
-                <div className="space-y-6">
-                  <div>
-                    <label className="text-muted-foreground text-sm block mb-1">Full Name</label>
-                    <p className="text-foreground text-lg">{profile?.full_name || "Not set"}</p>
-                  </div>
-                  <div>
-                    <label className="text-muted-foreground text-sm block mb-1">Email Address</label>
-                    <p className="text-foreground text-lg">{user.email}</p>
-                  </div>
-                  <div>
-                    <label className="text-muted-foreground text-sm block mb-1">Phone Number</label>
-                    <p className="text-foreground text-lg">{profile?.phone || "Not set"}</p>
-                  </div>
-                  <div className="pt-4 border-t border-border">
-                    <Button variant="heroOutline" onClick={handleSignOut}>
-                      <LogOut className="w-4 h-4 mr-2" />
-                      Sign Out
-                    </Button>
-                  </div>
+                <div className="flex items-center justify-between mb-6">
+                  <h3 className="font-display text-xl font-semibold text-foreground">Account Settings</h3>
+                </div>
+                {profile && (
+                  <ProfileEditor
+                    profile={{ ...profile, email: user.email }}
+                    onUpdate={fetchUserData}
+                    onCancel={() => setActiveTab("overview")}
+                  />
+                )}
+                <div className="mt-6 pt-6 border-t border-border">
+                  <Button variant="heroOutline" onClick={handleSignOut}>
+                    <LogOut className="w-4 h-4 mr-2" />
+                    Sign Out
+                  </Button>
                 </div>
               </div>
             )}
