@@ -5,8 +5,10 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/useAuth";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { z } from "zod";
+import PasswordReset from "@/components/PasswordReset";
+import UpdatePassword from "@/components/UpdatePassword";
 
 const loginSchema = z.object({
   email: z.string().trim().email("Please enter a valid email"),
@@ -27,10 +29,14 @@ const Auth = () => {
   const { toast } = useToast();
   const { signUp, signIn, user, loading } = useAuth();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const [isLogin, setIsLogin] = useState(true);
   const [showPassword, setShowPassword] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [showForgotPassword, setShowForgotPassword] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
+  
+  const isPasswordReset = searchParams.get("reset") === "true";
   
   const [formData, setFormData] = useState({
     fullName: "",
@@ -158,6 +164,16 @@ const Auth = () => {
       {/* Auth Form */}
       <div className="flex-1 flex items-center justify-center px-6 pt-16">
         <div className="w-full max-w-md">
+          {isPasswordReset ? (
+            <div className="bg-card rounded-3xl shadow-card p-8 border border-border">
+              <UpdatePassword />
+            </div>
+          ) : showForgotPassword ? (
+            <div className="bg-card rounded-3xl shadow-card p-8 border border-border">
+              <PasswordReset onBack={() => setShowForgotPassword(false)} />
+            </div>
+          ) : (
+          <>
           <div className="text-center mb-8">
             <div className="w-16 h-16 rounded-full bg-gold/10 border border-gold/20 flex items-center justify-center mx-auto mb-6">
               <Lock className="w-8 h-8 text-gold" />
@@ -211,7 +227,7 @@ const Auth = () => {
                 <div className="flex items-center justify-between">
                   <Label htmlFor="password" className="text-foreground font-medium">Password</Label>
                   {isLogin && (
-                    <button type="button" className="text-sm text-gold hover:underline">
+                    <button type="button" onClick={() => setShowForgotPassword(true)} className="text-sm text-gold hover:underline">
                       Forgot password?
                     </button>
                   )}
@@ -279,6 +295,8 @@ const Auth = () => {
                 </button>
               </p>
             </div>
+          </>
+          )}
           </form>
 
           <p className="text-center text-primary-foreground/40 text-sm mt-8">
