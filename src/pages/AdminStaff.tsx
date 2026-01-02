@@ -6,6 +6,7 @@ import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { Link, useNavigate } from "react-router-dom";
+import AdminNav from "@/components/AdminNav";
 
 interface StaffMember {
   id: string;
@@ -69,7 +70,7 @@ const mockStaff: StaffMember[] = [
 
 const AdminStaff = () => {
   const { toast } = useToast();
-  const { user, loading } = useAuth();
+  const { user, loading, signOut } = useAuth();
   const navigate = useNavigate();
   const [isAdmin, setIsAdmin] = useState(false);
   const [checkingRole, setCheckingRole] = useState(true);
@@ -133,19 +134,19 @@ const AdminStaff = () => {
 
   if (!user || !isAdmin) return null;
 
+  const handleSignOut = async () => {
+    await signOut();
+    await signOut();
+    toast({
+      title: "Signed out",
+      description: "You have been successfully signed out.",
+    });
+    navigate("/");
+  };
+
   return (
     <main className="min-h-screen bg-background">
-      {/* Header */}
-      <nav className="sticky top-0 z-50 bg-navy border-b border-gold/10">
-        <div className="container mx-auto px-6">
-          <div className="flex items-center justify-between h-16">
-            <div className="flex items-center gap-4">
-              <Link to="/" className="font-display text-xl font-bold text-primary-foreground">VA Agency</Link>
-              <span className="px-2 py-1 bg-gold/20 text-gold text-xs font-medium rounded">Admin</span>
-            </div>
-          </div>
-        </div>
-      </nav>
+      <AdminNav onSignOut={handleSignOut} />
 
       <div className="container mx-auto px-6 py-8">
         {/* Back Link */}
