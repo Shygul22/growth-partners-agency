@@ -173,131 +173,131 @@ const Auth = () => {
               <PasswordReset onBack={() => setShowForgotPassword(false)} />
             </div>
           ) : (
-          <>
-          <div className="text-center mb-8">
-            <div className="w-16 h-16 rounded-full bg-gold/10 border border-gold/20 flex items-center justify-center mx-auto mb-6">
-              <Lock className="w-8 h-8 text-gold" />
+          <div className="bg-card rounded-3xl shadow-card p-8 border border-border">
+            <div className="text-center mb-8">
+              <div className="w-16 h-16 rounded-full bg-gold/10 border border-gold/20 flex items-center justify-center mx-auto mb-6">
+                <Lock className="w-8 h-8 text-gold" />
+              </div>
+              <h1 className="font-display text-3xl font-bold text-primary-foreground mb-2">
+                {isLogin ? "Welcome Back" : "Create Account"}
+              </h1>
+              <p className="text-primary-foreground/60">
+                {isLogin ? "Sign in to access your dashboard" : "Start your 15-day trial today"}
+              </p>
             </div>
-            <h1 className="font-display text-3xl font-bold text-primary-foreground mb-2">
-              {isLogin ? "Welcome Back" : "Create Account"}
-            </h1>
-            <p className="text-primary-foreground/60">
-              {isLogin ? "Sign in to access your dashboard" : "Start your 15-day trial today"}
-            </p>
-          </div>
 
-          <form onSubmit={handleSubmit} className="bg-card rounded-3xl shadow-card p-8 border border-border">
-            <div className="space-y-5">
-              {!isLogin && (
+            <form onSubmit={handleSubmit}>
+              <div className="space-y-5">
+                {!isLogin && (
+                  <div>
+                    <Label htmlFor="fullName" className="text-foreground font-medium">Full Name</Label>
+                    <div className="relative mt-2">
+                      <User className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
+                      <Input
+                        id="fullName"
+                        name="fullName"
+                        value={formData.fullName}
+                        onChange={handleChange}
+                        placeholder="Your full name"
+                        className={`pl-10 bg-background border-border focus:border-gold focus:ring-gold/20 ${errors.fullName ? "border-destructive" : ""}`}
+                      />
+                    </div>
+                    {errors.fullName && <p className="text-destructive text-sm mt-1">{errors.fullName}</p>}
+                  </div>
+                )}
+
                 <div>
-                  <Label htmlFor="fullName" className="text-foreground font-medium">Full Name</Label>
+                  <Label htmlFor="email" className="text-foreground font-medium">Email Address</Label>
                   <div className="relative mt-2">
-                    <User className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
+                    <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
                     <Input
-                      id="fullName"
-                      name="fullName"
-                      value={formData.fullName}
+                      id="email"
+                      name="email"
+                      type="email"
+                      value={formData.email}
                       onChange={handleChange}
-                      placeholder="Your full name"
-                      className={`pl-10 bg-background border-border focus:border-gold focus:ring-gold/20 ${errors.fullName ? "border-destructive" : ""}`}
+                      placeholder="you@example.com"
+                      className={`pl-10 bg-background border-border focus:border-gold focus:ring-gold/20 ${errors.email ? "border-destructive" : ""}`}
                     />
                   </div>
-                  {errors.fullName && <p className="text-destructive text-sm mt-1">{errors.fullName}</p>}
+                  {errors.email && <p className="text-destructive text-sm mt-1">{errors.email}</p>}
                 </div>
-              )}
 
-              <div>
-                <Label htmlFor="email" className="text-foreground font-medium">Email Address</Label>
-                <div className="relative mt-2">
-                  <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
-                  <Input
-                    id="email"
-                    name="email"
-                    type="email"
-                    value={formData.email}
-                    onChange={handleChange}
-                    placeholder="you@example.com"
-                    className={`pl-10 bg-background border-border focus:border-gold focus:ring-gold/20 ${errors.email ? "border-destructive" : ""}`}
-                  />
-                </div>
-                {errors.email && <p className="text-destructive text-sm mt-1">{errors.email}</p>}
-              </div>
-
-              <div>
-                <div className="flex items-center justify-between">
-                  <Label htmlFor="password" className="text-foreground font-medium">Password</Label>
-                  {isLogin && (
-                    <button type="button" onClick={() => setShowForgotPassword(true)} className="text-sm text-gold hover:underline">
-                      Forgot password?
-                    </button>
-                  )}
-                </div>
-                <div className="relative mt-2">
-                  <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
-                  <Input
-                    id="password"
-                    name="password"
-                    type={showPassword ? "text" : "password"}
-                    value={formData.password}
-                    onChange={handleChange}
-                    placeholder="••••••••"
-                    className={`pl-10 pr-10 bg-background border-border focus:border-gold focus:ring-gold/20 ${errors.password ? "border-destructive" : ""}`}
-                  />
-                  <button
-                    type="button"
-                    onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
-                  >
-                    {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
-                  </button>
-                </div>
-                {errors.password && <p className="text-destructive text-sm mt-1">{errors.password}</p>}
-              </div>
-
-              {!isLogin && (
                 <div>
-                  <Label htmlFor="confirmPassword" className="text-foreground font-medium">Confirm Password</Label>
+                  <div className="flex items-center justify-between">
+                    <Label htmlFor="password" className="text-foreground font-medium">Password</Label>
+                    {isLogin && (
+                      <button type="button" onClick={() => setShowForgotPassword(true)} className="text-sm text-gold hover:underline">
+                        Forgot password?
+                      </button>
+                    )}
+                  </div>
                   <div className="relative mt-2">
                     <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
                     <Input
-                      id="confirmPassword"
-                      name="confirmPassword"
+                      id="password"
+                      name="password"
                       type={showPassword ? "text" : "password"}
-                      value={formData.confirmPassword}
+                      value={formData.password}
                       onChange={handleChange}
                       placeholder="••••••••"
-                      className={`pl-10 bg-background border-border focus:border-gold focus:ring-gold/20 ${errors.confirmPassword ? "border-destructive" : ""}`}
+                      className={`pl-10 pr-10 bg-background border-border focus:border-gold focus:ring-gold/20 ${errors.password ? "border-destructive" : ""}`}
                     />
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword(!showPassword)}
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                    >
+                      {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                    </button>
                   </div>
-                  {errors.confirmPassword && <p className="text-destructive text-sm mt-1">{errors.confirmPassword}</p>}
+                  {errors.password && <p className="text-destructive text-sm mt-1">{errors.password}</p>}
                 </div>
-              )}
 
-              <Button type="submit" variant="gold" size="lg" className="w-full" disabled={isSubmitting}>
-                {isSubmitting ? (isLogin ? "Signing in..." : "Creating account...") : (isLogin ? "Sign In" : "Create Account")}
-                <ArrowRight className="w-5 h-5" />
-              </Button>
-            </div>
+                {!isLogin && (
+                  <div>
+                    <Label htmlFor="confirmPassword" className="text-foreground font-medium">Confirm Password</Label>
+                    <div className="relative mt-2">
+                      <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
+                      <Input
+                        id="confirmPassword"
+                        name="confirmPassword"
+                        type={showPassword ? "text" : "password"}
+                        value={formData.confirmPassword}
+                        onChange={handleChange}
+                        placeholder="••••••••"
+                        className={`pl-10 bg-background border-border focus:border-gold focus:ring-gold/20 ${errors.confirmPassword ? "border-destructive" : ""}`}
+                      />
+                    </div>
+                    {errors.confirmPassword && <p className="text-destructive text-sm mt-1">{errors.confirmPassword}</p>}
+                  </div>
+                )}
 
-            <div className="mt-6 text-center">
-              <p className="text-muted-foreground">
-                {isLogin ? "Don't have an account?" : "Already have an account?"}{" "}
-                <button
-                  type="button"
-                  onClick={() => {
-                    setIsLogin(!isLogin);
-                    setErrors({});
-                    setFormData({ fullName: "", email: "", password: "", confirmPassword: "" });
-                  }}
-                  className="text-gold hover:underline font-medium"
-                >
-                  {isLogin ? "Sign Up" : "Sign In"}
-                </button>
-              </p>
-            </div>
-          </>
+                <Button type="submit" variant="gold" size="lg" className="w-full" disabled={isSubmitting}>
+                  {isSubmitting ? (isLogin ? "Signing in..." : "Creating account...") : (isLogin ? "Sign In" : "Create Account")}
+                  <ArrowRight className="w-5 h-5" />
+                </Button>
+              </div>
+
+              <div className="mt-6 text-center">
+                <p className="text-muted-foreground">
+                  {isLogin ? "Don't have an account?" : "Already have an account?"}{" "}
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setIsLogin(!isLogin);
+                      setErrors({});
+                      setFormData({ fullName: "", email: "", password: "", confirmPassword: "" });
+                    }}
+                    className="text-gold hover:underline font-medium"
+                  >
+                    {isLogin ? "Sign Up" : "Sign In"}
+                  </button>
+                </p>
+              </div>
+            </form>
+          </div>
           )}
-          </form>
 
           <p className="text-center text-primary-foreground/40 text-sm mt-8">
             Need help? Contact{" "}
