@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Users, CreditCard, BarChart3, Settings, LogOut, ChevronRight, Shield, UserPlus, Activity, TrendingUp, Clock, DollarSign } from "lucide-react";
+import { Users, CreditCard, BarChart3, Settings, ChevronRight, Shield, UserPlus, Activity, TrendingUp, Clock, DollarSign, ListTodo } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/useAuth";
@@ -12,6 +12,15 @@ interface DashboardStats {
   activeSubscriptions: number;
   totalRevenue: number;
   totalHoursUsed: number;
+  totalStaff: number;
+  pendingTasks: number;
+}
+
+interface RecentActivity {
+  id: string;
+  type: "signup" | "task" | "subscription";
+  message: string;
+  timestamp: string;
 }
 
 const Admin = () => {
@@ -20,12 +29,16 @@ const Admin = () => {
   const navigate = useNavigate();
   const [isAdmin, setIsAdmin] = useState(false);
   const [checkingRole, setCheckingRole] = useState(true);
+  const [loadingStats, setLoadingStats] = useState(true);
   const [stats, setStats] = useState<DashboardStats>({
     totalUsers: 0,
     activeSubscriptions: 0,
     totalRevenue: 0,
     totalHoursUsed: 0,
+    totalStaff: 0,
+    pendingTasks: 0,
   });
+  const [recentActivity, setRecentActivity] = useState<RecentActivity[]>([]);
   const [activeTab, setActiveTab] = useState<"overview" | "clients" | "staff" | "settings">("overview");
 
   useEffect(() => {
@@ -64,21 +77,95 @@ const Admin = () => {
   useEffect(() => {
     if (isAdmin) {
       fetchStats();
+      fetchRecentActivity();
     }
   }, [isAdmin]);
 
   const fetchStats = async () => {
-    // Fetch basic stats - in a real app, you'd have admin-only RLS policies
-    const { count: usersCount } = await supabase
-      .from("profiles")
-      .select("*", { count: "exact", head: true });
-    
-    setStats({
-      totalUsers: usersCount || 0,
-      activeSubscriptions: Math.floor((usersCount || 0) * 0.8),
-      totalRevenue: (usersCount || 0) * 25,
-      totalHoursUsed: (usersCount || 0) * 15,
-    });
+    setLoadingStats(true);
+    try {
+      // Fetch total users count
+      const { count: usersCount } = await supabase
+        .from("profiles")
+        .select("*", { count: "exact", head: true });
+      
+      // Fetch subscriptions data
+      const { data: subscriptions } = await supabase
+        .from("subscriptions")
+        .select("status, price, hours_used");
+      
+      const activeSubscriptions = subscriptions?.filter(s => s.status === "active" || s.status === "trial").length || 0;
+      const totalRevenue = subscriptions?.reduce((acc, s) => acc + Number(s.price || 0), 0) || 0;
+      const totalHoursUsed = subscriptions?.reduce((acc, s) => acc + Number(s.hours_used || 0), 0) || 0;
+
+      // Fetch staff count
+      const { count: staffCount } = await supabase
+        .from("staff")
+        .select("*", { count: "exact", head: true });
+
+      // Fetch pending tasks count
+      const { count: pendingTasksCount } = await supabase
+        .from("tasks")
+        .select("*", { count: "exact", head: true })
+        .eq("status", "pending");
+
+      setStats({
+        totalUsers: usersCount || 0,
+        activeSubscriptions,
+        totalRevenue,
+        totalHoursUsed,
+        totalStaff: staffCount || 0,
+        pendingTasks: pendingTasksCount || 0,
+      });
+    } catch (error) {
+      console.error("Error fetching stats:", error);
+    } finally {
+      setLoadingStats(false);
+    }
+  };
+
+  const fetchRecentActivity = async () => {
+    try {
+      // Fetch recent profiles (signups)
+      const { data: recentProfiles } = await supabase
+        .from("profiles")
+        .select("id, full_name, created_at")
+        .order("created_at", { ascending: false })
+        .limit(5);
+
+      // Fetch recent tasks
+      const { data: recentTasks } = await supabase
+        .from("tasks")
+        .select("id, title, created_at")
+        .order("created_at", { ascending: false })
+        .limit(5);
+
+      const activities: RecentActivity[] = [];
+      
+      recentProfiles?.forEach(profile => {
+        activities.push({
+          id: profile.id,
+          type: "signup",
+          message: `${profile.full_name || "New user"} joined`,
+          timestamp: profile.created_at,
+        });
+      });
+
+      recentTasks?.forEach(task => {
+        activities.push({
+          id: task.id,
+          type: "task",
+          message: `New task: ${task.title}`,
+          timestamp: task.created_at,
+        });
+      });
+
+      // Sort by timestamp and take top 10
+      activities.sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
+      setRecentActivity(activities.slice(0, 10));
+    } catch (error) {
+      console.error("Error fetching recent activity:", error);
+    }
   };
 
   const handleSignOut = async () => {
@@ -99,6 +186,17 @@ const Admin = () => {
   }
 
   if (!user || !isAdmin) return null;
+
+  const formatTimeAgo = (timestamp: string) => {
+    const now = new Date();
+    const time = new Date(timestamp);
+    const diff = Math.floor((now.getTime() - time.getTime()) / 1000);
+    
+    if (diff < 60) return "Just now";
+    if (diff < 3600) return `${Math.floor(diff / 60)}m ago`;
+    if (diff < 86400) return `${Math.floor(diff / 3600)}h ago`;
+    return `${Math.floor(diff / 86400)}d ago`;
+  };
 
   return (
     <main className="min-h-screen bg-background">
@@ -160,70 +258,112 @@ const Admin = () => {
                 </div>
 
                 {/* Stats Cards */}
-                <div className="grid md:grid-cols-4 gap-6">
-                  <div className="bg-card rounded-xl border border-border p-6">
-                    <div className="flex items-center justify-between mb-4">
-                      <span className="text-muted-foreground text-sm">Total Users</span>
-                      <Users className="w-5 h-5 text-gold" />
+                <div className="grid md:grid-cols-3 lg:grid-cols-6 gap-4">
+                  <div className="bg-card rounded-xl border border-border p-4">
+                    <div className="flex items-center justify-between mb-2">
+                      <span className="text-muted-foreground text-xs">Users</span>
+                      <Users className="w-4 h-4 text-gold" />
                     </div>
-                    <div className="text-3xl font-display font-bold text-foreground">{stats.totalUsers}</div>
-                    <p className="text-green-500 text-sm mt-1 flex items-center gap-1">
-                      <TrendingUp className="w-3 h-3" /> +12% this month
-                    </p>
+                    <div className="text-2xl font-display font-bold text-foreground">
+                      {loadingStats ? "..." : stats.totalUsers}
+                    </div>
                   </div>
 
-                  <div className="bg-card rounded-xl border border-border p-6">
-                    <div className="flex items-center justify-between mb-4">
-                      <span className="text-muted-foreground text-sm">Active Subscriptions</span>
-                      <CreditCard className="w-5 h-5 text-gold" />
+                  <div className="bg-card rounded-xl border border-border p-4">
+                    <div className="flex items-center justify-between mb-2">
+                      <span className="text-muted-foreground text-xs">Subscriptions</span>
+                      <CreditCard className="w-4 h-4 text-gold" />
                     </div>
-                    <div className="text-3xl font-display font-bold text-foreground">{stats.activeSubscriptions}</div>
-                    <p className="text-green-500 text-sm mt-1 flex items-center gap-1">
-                      <TrendingUp className="w-3 h-3" /> +8% this month
-                    </p>
+                    <div className="text-2xl font-display font-bold text-foreground">
+                      {loadingStats ? "..." : stats.activeSubscriptions}
+                    </div>
                   </div>
 
-                  <div className="bg-card rounded-xl border border-border p-6">
-                    <div className="flex items-center justify-between mb-4">
-                      <span className="text-muted-foreground text-sm">Total Revenue</span>
-                      <DollarSign className="w-5 h-5 text-gold" />
+                  <div className="bg-card rounded-xl border border-border p-4">
+                    <div className="flex items-center justify-between mb-2">
+                      <span className="text-muted-foreground text-xs">Revenue</span>
+                      <DollarSign className="w-4 h-4 text-gold" />
                     </div>
-                    <div className="text-3xl font-display font-bold text-foreground">${stats.totalRevenue}</div>
-                    <p className="text-green-500 text-sm mt-1 flex items-center gap-1">
-                      <TrendingUp className="w-3 h-3" /> +15% this month
-                    </p>
+                    <div className="text-2xl font-display font-bold text-foreground">
+                      ${loadingStats ? "..." : stats.totalRevenue.toFixed(0)}
+                    </div>
                   </div>
 
-                  <div className="bg-card rounded-xl border border-border p-6">
-                    <div className="flex items-center justify-between mb-4">
-                      <span className="text-muted-foreground text-sm">Hours Used</span>
-                      <Clock className="w-5 h-5 text-gold" />
+                  <div className="bg-card rounded-xl border border-border p-4">
+                    <div className="flex items-center justify-between mb-2">
+                      <span className="text-muted-foreground text-xs">Hours Used</span>
+                      <Clock className="w-4 h-4 text-gold" />
                     </div>
-                    <div className="text-3xl font-display font-bold text-foreground">{stats.totalHoursUsed}</div>
-                    <p className="text-muted-foreground text-sm mt-1">This month</p>
+                    <div className="text-2xl font-display font-bold text-foreground">
+                      {loadingStats ? "..." : stats.totalHoursUsed.toFixed(0)}
+                    </div>
+                  </div>
+
+                  <div className="bg-card rounded-xl border border-border p-4">
+                    <div className="flex items-center justify-between mb-2">
+                      <span className="text-muted-foreground text-xs">Staff</span>
+                      <UserPlus className="w-4 h-4 text-gold" />
+                    </div>
+                    <div className="text-2xl font-display font-bold text-foreground">
+                      {loadingStats ? "..." : stats.totalStaff}
+                    </div>
+                  </div>
+
+                  <div className="bg-card rounded-xl border border-border p-4">
+                    <div className="flex items-center justify-between mb-2">
+                      <span className="text-muted-foreground text-xs">Pending Tasks</span>
+                      <ListTodo className="w-4 h-4 text-gold" />
+                    </div>
+                    <div className="text-2xl font-display font-bold text-foreground">
+                      {loadingStats ? "..." : stats.pendingTasks}
+                    </div>
                   </div>
                 </div>
 
-                {/* Quick Actions */}
-                <div className="bg-card rounded-xl border border-border p-6">
-                  <h3 className="font-display text-lg font-semibold text-foreground mb-4">Quick Actions</h3>
-                  <div className="grid md:grid-cols-3 gap-4">
-                    <Link to="/admin/clients">
-                      <Button variant="heroOutline" className="w-full justify-start">
-                        <Users className="w-4 h-4 mr-2" />
-                        Manage Clients
+                {/* Quick Actions & Recent Activity */}
+                <div className="grid lg:grid-cols-2 gap-6">
+                  <div className="bg-card rounded-xl border border-border p-6">
+                    <h3 className="font-display text-lg font-semibold text-foreground mb-4">Quick Actions</h3>
+                    <div className="space-y-3">
+                      <Link to="/admin/clients">
+                        <Button variant="heroOutline" className="w-full justify-start">
+                          <Users className="w-4 h-4 mr-2" />
+                          Manage Clients
+                        </Button>
+                      </Link>
+                      <Link to="/admin/staff">
+                        <Button variant="heroOutline" className="w-full justify-start">
+                          <UserPlus className="w-4 h-4 mr-2" />
+                          Manage Staff
+                        </Button>
+                      </Link>
+                      <Button variant="heroOutline" className="w-full justify-start" onClick={fetchStats}>
+                        <Activity className="w-4 h-4 mr-2" />
+                        Refresh Stats
                       </Button>
-                    </Link>
-                    <Link to="/admin/staff">
-                      <Button variant="heroOutline" className="w-full justify-start">
-                        <UserPlus className="w-4 h-4 mr-2" />
-                        Manage Staff
-                      </Button>
-                    </Link>
-                    <Button variant="heroOutline" className="w-full justify-start">
-                      <Activity className="w-4 h-4 mr-2" />
-                      View Reports
-                    </Button>
+                    </div>
+                  </div>
+
+                  <div className="bg-card rounded-xl border border-border p-6">
+                    <h3 className="font-display text-lg font-semibold text-foreground mb-4">Recent Activity</h3>
+                    <div className="space-y-3">
+                      {recentActivity.length === 0 ? (
+                        <p className="text-muted-foreground text-sm">No recent activity</p>
+                      ) : (
+                        recentActivity.slice(0, 5).map((activity) => (
+                          <div key={activity.id} className="flex items-center justify-between py-2 border-b border-border last:border-0">
+                            <div className="flex items-center gap-3">
+                              <div className={`w-2 h-2 rounded-full ${
+                                activity.type === "signup" ? "bg-green-500" : 
+                                activity.type === "task" ? "bg-gold" : "bg-blue-500"
+                              }`} />
+                              <span className="text-sm text-foreground">{activity.message}</span>
+                            </div>
+                            <span className="text-xs text-muted-foreground">{formatTimeAgo(activity.timestamp)}</span>
+                          </div>
+                        ))
+                      )}
+                    </div>
                   </div>
                 </div>
               </>
@@ -240,7 +380,7 @@ const Admin = () => {
                   </Link>
                 </div>
                 <p className="text-muted-foreground">
-                  View and manage all client accounts, subscriptions, and service history.
+                  View and manage all {stats.totalUsers} client accounts, subscriptions, and service history.
                 </p>
               </div>
             )}
@@ -256,7 +396,7 @@ const Admin = () => {
                   </Link>
                 </div>
                 <p className="text-muted-foreground">
-                  Manage your virtual assistant team, assignments, and performance.
+                  Manage your {stats.totalStaff} virtual assistant team members, assignments, and performance.
                 </p>
               </div>
             )}

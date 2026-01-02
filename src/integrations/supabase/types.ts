@@ -104,6 +104,86 @@ export type Database = {
         }
         Relationships: []
       }
+      staff: {
+        Row: {
+          avatar_url: string | null
+          created_at: string
+          email: string
+          full_name: string
+          hourly_rate: number | null
+          id: string
+          phone: string | null
+          role: string
+          specialization: string | null
+          status: string
+          updated_at: string
+          user_id: string | null
+        }
+        Insert: {
+          avatar_url?: string | null
+          created_at?: string
+          email: string
+          full_name: string
+          hourly_rate?: number | null
+          id?: string
+          phone?: string | null
+          role?: string
+          specialization?: string | null
+          status?: string
+          updated_at?: string
+          user_id?: string | null
+        }
+        Update: {
+          avatar_url?: string | null
+          created_at?: string
+          email?: string
+          full_name?: string
+          hourly_rate?: number | null
+          id?: string
+          phone?: string | null
+          role?: string
+          specialization?: string | null
+          status?: string
+          updated_at?: string
+          user_id?: string | null
+        }
+        Relationships: []
+      }
+      staff_assignments: {
+        Row: {
+          assigned_at: string
+          client_id: string
+          id: string
+          notes: string | null
+          staff_id: string
+          status: string
+        }
+        Insert: {
+          assigned_at?: string
+          client_id: string
+          id?: string
+          notes?: string | null
+          staff_id: string
+          status?: string
+        }
+        Update: {
+          assigned_at?: string
+          client_id?: string
+          id?: string
+          notes?: string | null
+          staff_id?: string
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "staff_assignments_staff_id_fkey"
+            columns: ["staff_id"]
+            isOneToOne: false
+            referencedRelation: "staff"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       subscriptions: {
         Row: {
           billing_cycle: string | null
@@ -145,6 +225,59 @@ export type Database = {
           user_id?: string
         }
         Relationships: []
+      }
+      tasks: {
+        Row: {
+          assigned_staff_id: string | null
+          client_id: string
+          created_at: string
+          description: string | null
+          due_date: string | null
+          hours_actual: number | null
+          hours_estimated: number | null
+          id: string
+          priority: string
+          status: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          assigned_staff_id?: string | null
+          client_id: string
+          created_at?: string
+          description?: string | null
+          due_date?: string | null
+          hours_actual?: number | null
+          hours_estimated?: number | null
+          id?: string
+          priority?: string
+          status?: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          assigned_staff_id?: string | null
+          client_id?: string
+          created_at?: string
+          description?: string | null
+          due_date?: string | null
+          hours_actual?: number | null
+          hours_estimated?: number | null
+          id?: string
+          priority?: string
+          status?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "tasks_assigned_staff_id_fkey"
+            columns: ["assigned_staff_id"]
+            isOneToOne: false
+            referencedRelation: "staff"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       user_roles: {
         Row: {
