@@ -1,11 +1,13 @@
 import { useState, useEffect } from "react";
-import { User, CreditCard, Clock, Calendar, Settings, LogOut, ChevronRight, Crown, TrendingUp, CheckCircle2, Edit } from "lucide-react";
+import { User, CreditCard, Clock, Calendar, Settings, LogOut, ChevronRight, Crown, TrendingUp, CheckCircle2, Edit, Plus, Shield, MessageSquare, FileText } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { Link, useNavigate } from "react-router-dom";
 import ProfileEditor from "@/components/ProfileEditor";
+import TaskRequestForm from "@/components/TaskRequestForm";
+import QuickActions from "@/components/QuickActions";
 
 interface Profile {
   id: string;
@@ -42,7 +44,8 @@ const Dashboard = () => {
   const [profile, setProfile] = useState<Profile | null>(null);
   const [subscription, setSubscription] = useState<Subscription | null>(null);
   const [serviceHistory, setServiceHistory] = useState<ServiceHistory[]>([]);
-  const [activeTab, setActiveTab] = useState<"overview" | "history" | "subscription" | "settings">("overview");
+  const [activeTab, setActiveTab] = useState<"overview" | "history" | "subscription" | "new-task" | "settings">("overview");
+  const [isAdmin, setIsAdmin] = useState(false);
 
   useEffect(() => {
     if (!loading && !user) {
@@ -53,8 +56,18 @@ const Dashboard = () => {
   useEffect(() => {
     if (user) {
       fetchUserData();
+      checkAdminRole();
     }
   }, [user]);
+
+  const checkAdminRole = async () => {
+    if (!user) return;
+    const { data } = await supabase.rpc("has_role", {
+      _user_id: user.id,
+      _role: "admin",
+    });
+    setIsAdmin(data === true);
+  };
 
   const fetchUserData = async () => {
     if (!user) return;
@@ -120,6 +133,12 @@ const Dashboard = () => {
           <div className="flex items-center justify-between h-16">
             <Link to="/" className="font-display text-xl font-bold text-primary-foreground">VA Agency</Link>
             <div className="flex items-center gap-4">
+              {isAdmin && (
+                <Link to="/admin" className="flex items-center gap-1 px-3 py-1.5 bg-gold/20 text-gold text-xs font-medium rounded hover:bg-gold/30 transition-colors">
+                  <Shield className="w-3 h-3" />
+                  Admin
+                </Link>
+              )}
               <span className="text-primary-foreground/60 text-sm hidden md:block">
                 {profile?.full_name || user.email}
               </span>
@@ -154,6 +173,7 @@ const Dashboard = () => {
               <nav className="space-y-2">
                 {[
                   { id: "overview", label: "Overview", icon: TrendingUp },
+                  { id: "new-task", label: "New Task", icon: Plus },
                   { id: "history", label: "Service History", icon: Clock },
                   { id: "subscription", label: "Subscription", icon: CreditCard },
                   { id: "settings", label: "Settings", icon: Settings },
@@ -169,6 +189,9 @@ const Dashboard = () => {
                   >
                     <item.icon className="w-5 h-5" />
                     {item.label}
+                    {item.id === "new-task" && (
+                      <span className="ml-auto w-2 h-2 rounded-full bg-gold animate-pulse" />
+                    )}
                   </button>
                 ))}
               </nav>
@@ -276,6 +299,31 @@ const Dashboard = () => {
                   )}
                 </div>
               </>
+            )}
+
+            {activeTab === "new-task" && (
+              <div className="space-y-6">
+                <div className="bg-hero rounded-2xl p-8 text-primary-foreground">
+                  <h1 className="font-display text-2xl md:text-3xl font-bold mb-2">
+                    Request a New Task
+                  </h1>
+                  <p className="text-primary-foreground/70">
+                    Tell us what you need help with and we'll get started right away.
+                  </p>
+                </div>
+
+                {/* Quick Actions */}
+                <div className="bg-card rounded-xl border border-border p-6">
+                  <h3 className="font-display text-lg font-semibold text-foreground mb-4">Quick Actions</h3>
+                  <QuickActions onActionClick={(action) => console.log(action)} />
+                </div>
+
+                {/* Task Request Form */}
+                <div className="bg-card rounded-xl border border-border p-6">
+                  <h3 className="font-display text-lg font-semibold text-foreground mb-6">Submit a Task</h3>
+                  <TaskRequestForm onSubmit={() => setActiveTab("overview")} />
+                </div>
+              </div>
             )}
 
             {activeTab === "history" && (

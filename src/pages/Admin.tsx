@@ -5,6 +5,7 @@ import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { Link, useNavigate } from "react-router-dom";
+import AdminNav from "@/components/AdminNav";
 
 interface DashboardStats {
   totalUsers: number;
@@ -101,23 +102,7 @@ const Admin = () => {
 
   return (
     <main className="min-h-screen bg-background">
-      {/* Header */}
-      <nav className="sticky top-0 z-50 bg-navy border-b border-gold/10">
-        <div className="container mx-auto px-6">
-          <div className="flex items-center justify-between h-16">
-            <div className="flex items-center gap-4">
-              <Link to="/" className="font-display text-xl font-bold text-primary-foreground">VA Agency</Link>
-              <span className="px-2 py-1 bg-gold/20 text-gold text-xs font-medium rounded">Admin</span>
-            </div>
-            <div className="flex items-center gap-4">
-              <Button variant="heroOutline" size="sm" onClick={handleSignOut}>
-                <LogOut className="w-4 h-4 mr-2" />
-                Sign Out
-              </Button>
-            </div>
-          </div>
-        </div>
-      </nav>
+      <AdminNav onSignOut={handleSignOut} />
 
       <div className="container mx-auto px-6 py-8">
         <div className="grid lg:grid-cols-5 gap-8">
