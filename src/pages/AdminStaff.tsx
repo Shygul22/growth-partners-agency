@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { UserPlus, Search, ArrowLeft, Mail, Star, Clock, Plus, Briefcase, Award, Edit, Trash2, Phone } from "lucide-react";
+import { UserPlus, Search, ArrowLeft, Mail, Clock, Plus, Briefcase, Award, Edit, Trash2, Phone, Key, Eye, EyeOff } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
@@ -50,7 +50,11 @@ const AdminStaff = () => {
   const [filterStatus, setFilterStatus] = useState<"all" | "available" | "busy" | "offline">("all");
   const [addDialogOpen, setAddDialogOpen] = useState(false);
   const [editDialogOpen, setEditDialogOpen] = useState(false);
+  const [passwordDialogOpen, setPasswordDialogOpen] = useState(false);
   const [selectedStaff, setSelectedStaff] = useState<StaffMember | null>(null);
+  const [showPassword, setShowPassword] = useState(false);
+  const [newPassword, setNewPassword] = useState("");
+  const [isCreating, setIsCreating] = useState(false);
   const [staffForm, setStaffForm] = useState({
     full_name: "",
     email: "",
@@ -59,6 +63,7 @@ const AdminStaff = () => {
     specialization: "",
     status: "available",
     hourly_rate: 25,
+    password: "",
   });
 
   useEffect(() => {
@@ -150,33 +155,52 @@ const AdminStaff = () => {
   };
 
   const handleAddStaff = async () => {
+    if (staffForm.password.length < 6) {
+      toast({
+        title: "Error",
+        description: "Password must be at least 6 characters",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setIsCreating(true);
     try {
-      const { error } = await supabase.from("staff").insert({
-        full_name: staffForm.full_name,
-        email: staffForm.email,
-        phone: staffForm.phone || null,
-        role: staffForm.role,
-        specialization: staffForm.specialization || null,
-        status: staffForm.status,
-        hourly_rate: staffForm.hourly_rate,
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) throw new Error("Not authenticated");
+
+      const response = await supabase.functions.invoke("create-staff-user", {
+        body: {
+          email: staffForm.email,
+          password: staffForm.password,
+          full_name: staffForm.full_name,
+          phone: staffForm.phone || null,
+          role: staffForm.role,
+          specialization: staffForm.specialization || null,
+          status: staffForm.status,
+          hourly_rate: staffForm.hourly_rate,
+        },
       });
 
-      if (error) throw error;
+      if (response.error) throw new Error(response.error.message);
+      if (response.data?.error) throw new Error(response.data.error);
 
       toast({
         title: "Success",
-        description: "Staff member added successfully",
+        description: "Staff member created with login credentials",
       });
       setAddDialogOpen(false);
       resetForm();
       fetchStaff();
-    } catch (error) {
-      console.error("Error adding staff:", error);
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : "Failed to add staff member";
       toast({
         title: "Error",
-        description: "Failed to add staff member",
+        description: message,
         variant: "destructive",
       });
+    } finally {
+      setIsCreating(false);
     }
   };
 
@@ -190,6 +214,7 @@ const AdminStaff = () => {
       specialization: member.specialization || "",
       status: member.status,
       hourly_rate: member.hourly_rate,
+      password: "",
     });
     setEditDialogOpen(true);
   };
@@ -262,8 +287,55 @@ const AdminStaff = () => {
       specialization: "",
       status: "available",
       hourly_rate: 25,
+      password: "",
     });
     setSelectedStaff(null);
+    setNewPassword("");
+    setShowPassword(false);
+  };
+
+  const handleResetPassword = async () => {
+    if (!selectedStaff || newPassword.length < 6) {
+      toast({
+        title: "Error",
+        description: "Password must be at least 6 characters",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    try {
+      const response = await supabase.functions.invoke("update-staff-password", {
+        body: {
+          staff_id: selectedStaff.id,
+          new_password: newPassword,
+        },
+      });
+
+      if (response.error) throw new Error(response.error.message);
+      if (response.data?.error) throw new Error(response.data.error);
+
+      toast({
+        title: "Success",
+        description: "Password updated successfully",
+      });
+      setPasswordDialogOpen(false);
+      setNewPassword("");
+      setSelectedStaff(null);
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : "Failed to update password";
+      toast({
+        title: "Error",
+        description: message,
+        variant: "destructive",
+      });
+    }
+  };
+
+  const openPasswordDialog = (member: StaffMember) => {
+    setSelectedStaff(member);
+    setNewPassword("");
+    setPasswordDialogOpen(true);
   };
 
   const filteredStaff = staff.filter((member) => {
@@ -466,6 +538,9 @@ const AdminStaff = () => {
                   <Button variant="heroOutline" size="sm" className="flex-1" onClick={() => handleEditStaff(member)}>
                     <Edit className="w-4 h-4 mr-1" /> Edit
                   </Button>
+                  <Button variant="ghost" size="sm" onClick={() => openPasswordDialog(member)} title="Reset Password">
+                    <Key className="w-4 h-4 text-gold" />
+                  </Button>
                   <Button variant="ghost" size="sm" onClick={() => handleDeleteStaff(member.id)}>
                     <Trash2 className="w-4 h-4 text-destructive" />
                   </Button>
@@ -560,19 +635,39 @@ const AdminStaff = () => {
                 </Select>
               </div>
             </div>
-            <div className="space-y-2">
-              <Label>Hourly Rate ($)</Label>
-              <Input
-                type="number"
-                value={staffForm.hourly_rate}
-                onChange={(e) => setStaffForm({ ...staffForm, hourly_rate: parseFloat(e.target.value) || 0 })}
-              />
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label>Hourly Rate ($)</Label>
+                <Input
+                  type="number"
+                  value={staffForm.hourly_rate}
+                  onChange={(e) => setStaffForm({ ...staffForm, hourly_rate: parseFloat(e.target.value) || 0 })}
+                />
+              </div>
+              <div className="space-y-2">
+                <Label>Password *</Label>
+                <div className="relative">
+                  <Input
+                    type={showPassword ? "text" : "password"}
+                    value={staffForm.password}
+                    onChange={(e) => setStaffForm({ ...staffForm, password: e.target.value })}
+                    placeholder="Min 6 characters"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                  >
+                    {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                  </button>
+                </div>
+              </div>
             </div>
           </div>
           <DialogFooter>
             <Button variant="outline" onClick={() => setAddDialogOpen(false)}>Cancel</Button>
-            <Button variant="gold" onClick={handleAddStaff} disabled={!staffForm.full_name || !staffForm.email}>
-              Add Staff
+            <Button variant="gold" onClick={handleAddStaff} disabled={!staffForm.full_name || !staffForm.email || staffForm.password.length < 6 || isCreating}>
+              {isCreating ? "Creating..." : "Add Staff"}
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -661,6 +756,47 @@ const AdminStaff = () => {
             <Button variant="outline" onClick={() => setEditDialogOpen(false)}>Cancel</Button>
             <Button variant="gold" onClick={handleUpdateStaff} disabled={!staffForm.full_name || !staffForm.email}>
               Save Changes
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Reset Password Dialog */}
+      <Dialog open={passwordDialogOpen} onOpenChange={setPasswordDialogOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Reset Password</DialogTitle>
+            <DialogDescription>
+              Set a new password for {selectedStaff?.full_name}
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4">
+            <div className="space-y-2">
+              <Label>New Password *</Label>
+              <div className="relative">
+                <Input
+                  type={showPassword ? "text" : "password"}
+                  value={newPassword}
+                  onChange={(e) => setNewPassword(e.target.value)}
+                  placeholder="Min 6 characters"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                >
+                  {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                </button>
+              </div>
+              <p className="text-muted-foreground text-xs">
+                Password must be at least 6 characters
+              </p>
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setPasswordDialogOpen(false)}>Cancel</Button>
+            <Button variant="gold" onClick={handleResetPassword} disabled={newPassword.length < 6}>
+              Update Password
             </Button>
           </DialogFooter>
         </DialogContent>
