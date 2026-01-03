@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { ArrowRight, Sparkles, Users, Zap, Target, Clock, Shield, ChevronRight, CheckCircle2, Star, Calendar, Mail, ListChecks, Briefcase, HeartHandshake, TrendingUp, Home, ShoppingBag, Building2, Check, Crown, Diamond, Gem, Menu, X, Phone, Send } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
@@ -849,9 +849,9 @@ const CTA = () => {
   );
 };
 
-const Footer = () => {
+const Footer = React.forwardRef<HTMLElement>((props, ref) => {
   return (
-    <footer className="bg-navy py-16">
+    <footer ref={ref} className="bg-navy py-16">
       <div className="container mx-auto px-6">
         <div className="grid md:grid-cols-4 gap-12 mb-12">
           <div className="md:col-span-2">
@@ -899,7 +899,8 @@ const Footer = () => {
       </div>
     </footer>
   );
-};
+});
+Footer.displayName = "Footer";
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -943,6 +944,11 @@ const Navbar = () => {
             </div>
             
             <div className="hidden md:flex items-center gap-4">
+              <Link to="/staff/login">
+                <Button variant="ghost" size="sm" className="text-primary-foreground/70 hover:text-gold">
+                  Staff Login
+                </Button>
+              </Link>
               <Link to="/auth">
                 <Button variant="heroOutline" size="sm">
                   Client Login
@@ -1008,6 +1014,11 @@ const Navbar = () => {
           </div>
 
           <div className="p-6 border-t border-gold/10 space-y-3">
+            <Link to="/staff/login" onClick={() => setIsOpen(false)}>
+              <Button variant="ghost" size="lg" className="w-full text-primary-foreground/70 hover:text-gold mb-2">
+                Staff Login
+              </Button>
+            </Link>
             <Link to="/auth" onClick={() => setIsOpen(false)}>
               <Button variant="heroOutline" size="lg" className="w-full">
                 Client Login
