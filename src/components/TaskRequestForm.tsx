@@ -6,6 +6,8 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
+import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/hooks/useAuth";
 
 interface TaskRequestFormProps {
   onSubmit?: () => void;
@@ -13,6 +15,7 @@ interface TaskRequestFormProps {
 
 const TaskRequestForm = ({ onSubmit }: TaskRequestFormProps) => {
   const { toast } = useToast();
+  const { user } = useAuth();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [formData, setFormData] = useState({
     title: "",
@@ -37,27 +40,64 @@ const TaskRequestForm = ({ onSubmit }: TaskRequestFormProps) => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    if (!user) {
+      toast({
+        title: "Error",
+        description: "You must be logged in to submit a task.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    if (!formData.title.trim() || !formData.description.trim()) {
+      toast({
+        title: "Required Fields",
+        description: "Please fill in the title and description.",
+        variant: "destructive",
+      });
+      return;
+    }
+
     setIsSubmitting(true);
 
-    // Simulate submission - in production, this would save to the database
-    await new Promise(resolve => setTimeout(resolve, 1000));
+    try {
+      const { error } = await supabase.from("tasks").insert({
+        client_id: user.id,
+        title: formData.title.trim(),
+        description: `[${formData.category || "General"}] ${formData.description.trim()}`,
+        priority: formData.priority,
+        status: "pending",
+        due_date: formData.dueDate ? new Date(formData.dueDate).toISOString() : null,
+        hours_estimated: formData.estimatedHours ? parseFloat(formData.estimatedHours) : null,
+      });
 
-    toast({
-      title: "Task Submitted!",
-      description: "Your virtual assistant will start working on this task soon.",
-    });
+      if (error) throw error;
 
-    setFormData({
-      title: "",
-      category: "",
-      priority: "medium",
-      dueDate: "",
-      estimatedHours: "",
-      description: "",
-    });
+      toast({
+        title: "Task Submitted!",
+        description: "Your virtual assistant will start working on this task soon.",
+      });
 
-    setIsSubmitting(false);
-    onSubmit?.();
+      setFormData({
+        title: "",
+        category: "",
+        priority: "medium",
+        dueDate: "",
+        estimatedHours: "",
+        description: "",
+      });
+
+      onSubmit?.();
+    } catch (error: any) {
+      toast({
+        title: "Error",
+        description: error.message || "Failed to submit task. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
